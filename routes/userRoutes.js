@@ -3,7 +3,7 @@ const cors = require('cors');
 const bodyParser = require("body-parser");
 
 const router = express.Router();
-const pool = require('../config')
+const pool = require('../db/config');
 
 const _urlencoded = express.urlencoded({ extended: false });
 router.use(cors());
@@ -29,7 +29,7 @@ router.use((req, res, next) => {
 ///....Create a Users table......
 router.get('/createUser', (req, res)=>{
     let sql =
-     `CREATE TABLE Users (id  int AUTO_INCREMENT ,username VARCHAR(6), wallet_address VARCHAR(255), email VARCHAR(255), timestamp DATE, PRIMARY KEY (id))`;
+     `CREATE TABLE Users (id  int AUTO_INCREMENT ,uid VARCHAR(255),profileImage VARCHAR(255),username VARCHAR(255), wallet_address VARCHAR(255), email VARCHAR(255), timestamp DATE, PRIMARY KEY (id))`;
     pool.query(sql,(err,result)=>{
        if(err != null){
         res.status(404).send(err);
@@ -46,44 +46,19 @@ console.log(result);
    router.put('/registerUser', (req, res) => {
 
     const {
-        webCode,
-        subscriptionType,
-        subscriptionAmount,
-        record_last_update,
-        payment_date,
-        mpesaReceipt,
         username,
-        shopName,
-        uid,
-        userCategory,
-        deviceToken,
-        county,
-        phone,
-        date,
+        wallet_address,
+        email,
         timestamp,
-        lat,
-        lng,
+       
     } = req.body;
 
        let Users =
         {
-            webCode,
-            subscriptionType,
-            subscriptionAmount,
-            record_last_update,
-            payment_date,
-            mpesaReceipt,
-            username,
-            shopName,
-            uid,
-            userCategory,
-            deviceToken,
-            county,
-            phone,
-            date,
-            timestamp,
-            lat,
-        lng,
+        username,
+        wallet_address,
+        email,
+        timestamp,
          };
 
          console.log(req.body);
