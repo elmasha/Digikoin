@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const app = express();
+
 const port = 4000;
 
 
@@ -9,6 +10,8 @@ const port = 4000;
 
 // Import Routes
 const userRoutes = require('./routes/userRoutes');
+const stripePayment = require('./stripe');
+
 // const transactionRoutes = require('./routes/transactionRoutes');
 // const balanceRoutes = require('./routes/balanceRoutes');
 // const equityInvestmentRoutes = require('./routes/equityInvestmentRoutes');
@@ -20,6 +23,7 @@ app.use(express.json());
 app.use(cors());
 
 // Register Routes
+app.use('/payments', stripePayment);
 app.use('/user', userRoutes);
 // app.use('/transactions', transactionRoutes);
 // app.use('/balances', balanceRoutes);

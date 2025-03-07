@@ -29,7 +29,7 @@ router.use((req, res, next) => {
 ///....Create a Users table......
 router.get('/createUser', (req, res)=>{
     let sql =
-     `CREATE TABLE Users (id  int AUTO_INCREMENT ,uid VARCHAR(255),profileImage VARCHAR(255),username VARCHAR(255), wallet_address VARCHAR(255), email VARCHAR(255), timestamp DATE, PRIMARY KEY (id))`;
+     `CREATE TABLE Users (id  int AUTO_INCREMENT ,uid VARCHAR(255),profileImage VARCHAR(255),username VARCHAR(255), wallet_address VARCHAR(255),wallet_balance DECIMAL(18,8), email VARCHAR(255), timestamp DATE, PRIMARY KEY (id))`;
     pool.query(sql,(err,result)=>{
        if(err != null){
         res.status(404).send(err);
@@ -46,8 +46,11 @@ console.log(result);
    router.put('/registerUser', (req, res) => {
 
     const {
+        uid,
+        profileImage,
         username,
         wallet_address,
+        wallet_balance,
         email,
         timestamp,
        
@@ -55,10 +58,13 @@ console.log(result);
 
        let Users =
         {
-        username,
-        wallet_address,
-        email,
-        timestamp,
+            uid,
+            profileImage,
+            username,
+            wallet_address,
+            wallet_balance,
+            email,
+            timestamp,
          };
 
          console.log(req.body);
@@ -152,11 +158,11 @@ console.log(result);
 
    
    ///....CheckExisting User .........
-   router.get('/existingUser/:phone/', (req, res) => {
-    const phone = req.params.phone;
-    const userCategory = req.body.userCategory;
-    const query = "SELECT 1 FROM users WHERE phone = ? AND userCategory = ?";
-    pool.query(query, [phone,userCategory], (err, results) => {
+   router.get('/existingUser/:wallet_address/', (req, res) => {
+    const phone = req.params.wallet_address;
+    const userCategory = req.body.uid;
+    const query = "SELECT 1 FROM users WHERE wallet_address = ? AND uid = ?";
+    pool.query(query, [wallet_address,uid], (err, results) => {
       if (err) {
         console.error("Error executing query:", err);
         return res.status(500).send("Internal Server Error");
@@ -172,35 +178,11 @@ console.log(result);
    })
 
 
-   ///....Like User .........
-   router.post('/likeUser/:id/', (req, res) => {
-    const UserId = req.params.id;
-       let sql = `  UPDATE Users
-        SET likes = likes + 1
-        WHERE id = ?`;
-       let query = pool.query(sql, UserId, (err, result)=>{
-           if(err !== null){
-            res.status(404).send(err);
-           }else{     
-      let sql = 'SELECT * FROM Users';
-       let query = pool.query(sql, (err, result)=>{
-        if(err !=null){
-           return res.status(404).json(err);
-        }
-       console.log(result);
-       res.status(200).json(result);
-       console.log("User fetched");
-       console.log(`User liked ..`);
-       });
-           }
-       
-       });
-   })
-
+  
    
    ///....Delete User .........
    router.post('/deleteUser/:id/', (req, res) => {
-       let sql = `DELETE FROM Users WHERE id = ${req.body.title}`;
+       let sql = `DELETE FROM Users WHERE id = ${req.body.uid}`;
        let query = pool.query(sql, (err, result)=>{
            if(err)  res.status(404).send(err);
        console.log(result);
